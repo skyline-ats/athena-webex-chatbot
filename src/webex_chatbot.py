@@ -12,7 +12,7 @@ headers = {
 
 
 def send_message(room_id, message):
-    url = "https://webexapis.com/v1/messages"
+    url = "https://api-usgov.webex.com/v1/messages"
     data = {"roomId": room_id, "text": message}
     requests.post(url, headers=headers, data=json.dumps(data))
 
@@ -22,11 +22,10 @@ def webhook():
     json_data = request.json
     room_id = json_data['data']['roomId']
     message_id = json_data['data']['id']
-
-    get_message_url = f"https://webexapis.com/v1/messages/{message_id}"
+    get_message_url = f"https://api-usgov.webex.com/v1/messages/{message_id}"
     message_data = requests.get(get_message_url, headers=headers).json()
 
-    if message_data['personEmail'] == BOT_EMAIL:
+    if 'personEmail' in message_data.keys() and message_data['personEmail'] == BOT_EMAIL:
         return "Message from bot, ignoring", 200
 
     send_message(room_id, "Hello! You said: " + message_data['text'])
